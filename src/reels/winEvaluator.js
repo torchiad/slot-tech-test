@@ -112,22 +112,19 @@ export class WinEvaluator {
                 if (
                     winZoneSymbolsArrays.every(
                         (symbols) =>
-                            symbols[i]._name ===
-                            winZoneSymbolsArrays[0][i]._name
+                            symbols[i]._id === winZoneSymbolsArrays[0][i]._id
                     )
                 ) {
                     const totalValue = winZoneSymbolsArrays.reduce(
-                        (acc, symbolsArray) =>
-                            acc +
-                            symbolsArray.reduce(
-                                (sum, symbol) => sum + symbol._value,
-                                0
-                            ),
+                        (acc, symbols) => acc + symbols[i]._value,
                         0
                     );
+
+                    console.log(`Total Winnings Before Update: ${totalValue}`);
                     this.totalWinnings += totalValue;
                     this.updateWinningsDisplay();
                     soundManager.playSound("win");
+
                     await this.highlightWinLine(i);
                 } else {
                     console.log(`No win at position ${i + 1}.`);
