@@ -1,7 +1,9 @@
 import * as PIXI from "pixi.js";
 import { Reel } from "./reel.js";
 import { Base } from "../base.js";
-import { timerManager } from "../utils/timermanager.js";
+import { soundManager } from "../soundManager.js";
+import { timerManager } from "../utils/timerManager.js";
+import { WinEvaluator } from "./winEvaluator.js";
 
 /**
  * Reel manager controls multipler reels 
@@ -24,6 +26,7 @@ export class ReelManager extends Base {
         this._symbolHeight = symbolHeight;
         this._reels = [];
         this._create();
+        soundManager.loadSound("reelSpin", "./resource/audio/click.wav");
     }
 
     /**
@@ -34,36 +37,41 @@ export class ReelManager extends Base {
             return;
         }
         this._spinning = true;
-        this._reels.forEach(reel => {
+        this.winEvaluator.removeWinningsDisplay();
+        soundManager.playSound("reelSpin");
+        this._reels.forEach((reel) => {
             reel.startSpin();
         });
-       
     }
 
     /**
      * Stop the reels spinning
-     * 
+     *
      * @async
      */
     async stopSpin() {
         if (!this._spinning) {
             return;
         }
+        soundManager.stopSound("reelSpin");
         this._promises = [];
         this._promises.push(this._reels[0].stopSpin());
         await timerManager.startTimer(250);
         this._promises.push(this._reels[1].stopSpin());
         await timerManager.startTimer(250);
         this._promises.push(this._reels[2].stopSpin());
-        
+
         await Promise.all(this._promises);
-        
+
+        const winnings = await this.winEvaluator.evaluateWinLines(this._reels);
         this._spinning = false;
+
+        return winnings;
     }
 
     /**
      * Create the reelManager using PIXI container and required reel instances
-     * 
+     *
      * @private
      */
     _create() {
@@ -72,6 +80,7 @@ export class ReelManager extends Base {
         this._native.y = 80;
         this._createMask();
         this._createReels();
+        this.winEvaluator = new WinEvaluator(this);
     }
 
     /**

@@ -2,25 +2,26 @@ import * as PIXI from "pixi.js";
 import { Base } from "../base.js";
 
 /**
- * Symbol 
- * 
+ * Symbol
+ *
  * @class
  * @extends Base
  */
 export class Symbol extends Base {
     /**
-     * 
+     *
      * @param {number} id - id used for the symbols
      * @param {string} name - name of the symbol asset
+     * @param {number} value - value of the symbol asset
      */
-    constructor(id, name) {
+    constructor(id, name, value) {
         super();
-        this._create(id, name);
+        this._create(id, name, value);
     }
 
     /**
      * Get the id of the symbol
-     * 
+     *
      * @member
      * @readonly
      */
@@ -30,14 +31,14 @@ export class Symbol extends Base {
 
     /**
      * Play the symbol animation
-     * 
+     *
      * @param {boolean} [loop=false] - loop the animation
      */
-    play(loop=false) {        
+    play(loop = false) {
         this._native.loop = loop;
         this._native.play();
     }
-    
+
     /**
      * Stop the symbol animation
      */
@@ -48,23 +49,27 @@ export class Symbol extends Base {
     /**
      * Reset the symbol and remove from parent object
      */
-    reset(){
-        this._native.parent.removeChild(this._native);       
+    reset() {
+        this._native.parent.removeChild(this._native);
         this._native.x = 0;
         this._native.y = 0;
     }
 
     /**
      * create the Symbol using base PIXI objects and loaded animations
-     * 
+     *
      * @param {number} id - id used for the symbols
      * @param {string} name - name of the symbol asset
+     * @param {number} value - value of the symbol asset
      * @private
      */
-    _create(id, name) {
+    _create(id, name, value) {
         this._id = id;
         this._name = name;
+        this._value = value;
         const animations = PIXI.Assets.cache.get(this._name).data.animations;
-        this._native = PIXI.AnimatedSprite.fromFrames(animations[`${this._name}Win`]);
+        this._native = PIXI.AnimatedSprite.fromFrames(
+            animations[`${this._name}Win`]
+        );
     }
 }

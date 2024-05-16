@@ -3,8 +3,11 @@ import { assetLoader } from "./assetLoader.js";
 import * as PIXI from "pixi.js";
 import { symbolStore } from "./reels/symbolStore.js";
 import { ReelManager } from "./reels/reelsManager.js";
-import { timerManager } from "./utils/timermanager.js";
-import { Button } from "./button.js";
+import { PlayerBalance } from "./ui/playerBalance.js";
+import { soundManager } from "./soundManager.js";
+import { SpinButton } from "./ui/spinButton.js";
+import { Scenery } from "./ui/scenery.js";
+import { timerManager } from "./utils/timerManager.js";
 
 /**
  * Base entry point for the game
@@ -56,6 +59,7 @@ class Core {
             height: 576
         });
         renderer.start();
+        soundManager.initialise();
         timerManager.init();
         await this.loadAssets();
         this._createObjects(); 
@@ -77,29 +81,30 @@ class Core {
 
         const background = PIXI.Sprite.from("background");
         renderer.addChild(background);
-
-        symbolStore.createSymbols([
-            {id: 0, name: "h2"},
-            {id: 1, name: "h3"},
-            {id: 2, name: "h4"},
-            {id: 3, name: "ace"},
-            {id: 4, name: "king"},
-            {id: 5, name: "queen"},
-            {id: 6, name: "jack"},
-            {id: 7, name: "ten"},
-            {id: 8, name: "nine"}
-        ],
-        3,
-        3);
+        symbolStore.createSymbols(
+            [
+                { id: 0, name: "h2", value: 9 },
+                { id: 1, name: "h3", value: 8 },
+                { id: 2, name: "h4", value: 7 },
+                { id: 3, name: "ace", value: 6 },
+                { id: 4, name: "king", value: 5 },
+                { id: 5, name: "queen", value: 4 },
+                { id: 6, name: "jack", value: 3 },
+                { id: 7, name: "ten", value: 2 },
+                { id: 8, name: "nine", value: 1 },
+            ],
+            3,
+            3
+        );
 
         const container = new PIXI.Container("reelSquares");
         container.x = 324;
         container.y = 95;
         renderer.addChild(container);
-        let width = 125;
-        let height = 105;
+        const width = 125;
+        const height = 105;
         for (let i = 0; i < 3; i++) {
-            for( let j = 0; j < 3; j++) {
+            for (let j = 0; j < 3; j++) {
                 const symbolBack = PIXI.Sprite.from("reelSquare");
                 container.addChild(symbolBack);
                 symbolBack.x = i * width;
@@ -110,15 +115,12 @@ class Core {
         this._reelManager = new ReelManager(3, 3, 125, 105);
         renderer.addChild(this._reelManager.native);
 
-        const button = new Button("playActive", async() => {
-            this._reelManager.startSpin();            
-            await timerManager.startTimer(2000);
-            this._reelManager.stopSpin();    
-        });
-        button.x = 475;
-        button.y = 440;
-        renderer.addChild(button.native);
+        this.playerBalance = new PlayerBalance(100);
 
+        //@todo find a better way to get hold of the playerBalance and reelManager
+        this.spinButton = new SpinButton(this.playerBalance, this._reelManager);
+
+        this.scenery = new Scenery();
     }
 }
 
