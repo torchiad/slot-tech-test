@@ -114,15 +114,10 @@ class Core {
         this._reelManager = new ReelManager(3, 3, 125, 105);
         renderer.addChild(this._reelManager.native);
 
-        const button = new Button("playActive", async() => {
-            this._reelManager.startSpin();            
-            await timerManager.startTimer(2000);
-            this._reelManager.stopSpin();    
-        });
-        button.x = 475;
-        button.y = 440;
-        renderer.addChild(button.native);
         this.playerBalance = new PlayerBalance(100);
+
+        //@todo find a better way to get hold of the playerBalance and reelManager
+        this.spinButton = new SpinButton(this.playerBalance, this._reelManager);
 
         this.scenery = new Scenery();
     }
