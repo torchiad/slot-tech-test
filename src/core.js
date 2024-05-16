@@ -5,6 +5,7 @@ import { symbolStore } from "./reels/symbolStore.js";
 import { ReelManager } from "./reels/reelsManager.js";
 import { timerManager } from "./utils/timermanager.js";
 import { Button } from "./button.js";
+import { PlayerBalance } from "./ui/playerBalance.js";
 import { soundManager } from "./soundManager.js";
 import { Scenery } from "./ui/scenery.js";
 
@@ -121,6 +122,7 @@ class Core {
         button.x = 475;
         button.y = 440;
         renderer.addChild(button.native);
+        this.playerBalance = new PlayerBalance(100);
 
         this.scenery = new Scenery();
     }
