@@ -98,10 +98,16 @@ export class WinEvaluator {
             throw new Error("Invalid reels data provided for evaluation.");
         }
         try {
+            //we want to remove the first and last symbol from each reel
+            //as they are not part of the win zone
+            //@todo this is limiting to 3 row slots. This should be dynamic
+            //length based on the number of symbols per reel
             const winZoneSymbolsArrays = reels.map((reel) =>
                 reel._symbols.slice(1, 4)
             );
 
+            //check each row on the reels for a win
+            //@todo change from 3 to the reels length
             for (let i = 0; i < 3; i++) {
                 if (
                     winZoneSymbolsArrays.every(
@@ -143,6 +149,7 @@ export class WinEvaluator {
         try {
             const line = new PIXI.Graphics();
             line.lineStyle(10, 0xff0000, 1);
+            //@todo 20 aligns it but makes it less dynamic
             const startX = this.reelManager._reels[0].x + 20;
             const endX =
                 this.reelManager._reels[this.reelManager._reels.length - 1].x +
@@ -150,6 +157,7 @@ export class WinEvaluator {
             const yOffset = this.reelManager._reels[0].y;
             const symbolRelativeY =
                 this.reelManager._reels[0]._symbols[rowIndex + 1].y;
+            //@todo 26 aligns it but makes it less dynamic
             const yPosition =
                 yOffset + symbolRelativeY + this.reelManager._symbolHeight - 26;
 
