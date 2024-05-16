@@ -2,6 +2,7 @@ import * as PIXI from "pixi.js";
 import { Reel } from "./reel.js";
 import { Base } from "../base.js";
 import { timerManager } from "../utils/timermanager.js";
+import { soundManager } from "../soundManager.js";
 
 /**
  * Reel manager controls multipler reels 
@@ -24,6 +25,7 @@ export class ReelManager extends Base {
         this._symbolHeight = symbolHeight;
         this._reels = [];
         this._create();
+        soundManager.loadSound("reelSpin", "./resource/audio/click.wav");
     }
 
     /**
@@ -35,6 +37,7 @@ export class ReelManager extends Base {
         }
         this._spinning = true;
         this._reels.forEach(reel => {
+        soundManager.playSound("reelSpin");
             reel.startSpin();
         });
        
@@ -49,6 +52,7 @@ export class ReelManager extends Base {
         if (!this._spinning) {
             return;
         }
+        soundManager.stopSound("reelSpin");
         this._promises = [];
         this._promises.push(this._reels[0].stopSpin());
         await timerManager.startTimer(250);
