@@ -4,11 +4,12 @@ import { Symbol } from "./symbol.js";
  * @typedef SymbolObject
  * @property {number} id - Id of the symbol
  * @property {string} name - name of the symbol
+ * @property {number} value - value of the symbol
  */
 
 /**
  * Symbol store used to create all symbols at initialisation for use through the game
- * 
+ *
  * @class
  */
 class SymbolStore {
@@ -25,20 +26,20 @@ class SymbolStore {
     createSymbols(symbolIds, reels, rows) {
         const maxSymbols = reels * rows;
 
-        for(let i = 0; i < symbolIds.length; i++) { 
-            const {id, name} = symbolIds[i];       
+        for (let i = 0; i < symbolIds.length; i++) {
+            const { id, name, value } = symbolIds[i];
             const symbols = [];
-            for(let j = 0; j < maxSymbols; j++) {
-                symbols.push(new Symbol(id, name))
+            for (let j = 0; j < maxSymbols; j++) {
+                symbols.push(new Symbol(id, name, value));
             }
-            
+
             this._symbols.set(id, symbols);
         }
     }
 
     /**
      * get a random symbol from the store
-     * 
+     *
      * @returns {Symbol}
      */
     getRandomSymbol() {
